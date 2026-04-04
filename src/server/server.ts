@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import cors from '@fastify/cors'
 import websocketPlugin from '@fastify/websocket'
 import fastify from 'fastify'
@@ -5,14 +6,21 @@ import type { RawData } from 'ws'
 import { loadAsset, storeAsset } from './assets'
 import { makeOrLoadRoom } from './rooms'
 import { unfurl } from './unfurl'
+import { agentStreamHandler } from './agentStream'
 
 const PORT = 5858
 
 // For this example we use a simple fastify server with the official websocket plugin
 // To keep things simple we're skipping normal production concerns like rate limiting and input validation.
-const app = fastify()
+const app = fastify({ bodyLimit: 50 * 1024 * 1024 }) // 50MB for canvas screenshots
 app.register(websocketPlugin)
 app.register(cors, { origin: '*' })
+
+// Agent stream endpoint — separate scope so JSON body parsing works
+// (the multiplayer scope below uses a wildcard content type parser that would break this)
+app.register(async (app) => {
+	app.post('/stream', agentStreamHandler)
+})
 
 app.register(async (app) => {
 	// This is the main entrypoint for the multiplayer sync

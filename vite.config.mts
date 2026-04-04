@@ -9,6 +9,12 @@ export default defineConfig(() => ({
 	server: {
 		port: 5757,
 		host: true,
+		proxy: {
+			'/stream': {
+				target: 'http://localhost:5858',
+				changeOrigin: true,
+			},
+		},
 	},
 	optimizeDeps: {
 		exclude: ['@tldraw/assets'],
