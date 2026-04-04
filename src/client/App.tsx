@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useSync } from '@tldraw/sync'
 import {
 	DefaultSizeStyle,
@@ -59,6 +59,9 @@ function App() {
 	const [app, setApp] = useState<TldrawAgentApp | null>(null)
 	const [editor, setEditor] = useState<Editor | null>(null)
 	const [isChatOpen, setIsChatOpen] = useState(false)
+	const [isRecording, setIsRecording] = useState(false)
+	const [speechLang, setSpeechLang] = useState('en-US')
+	const recognitionRef = useRef<any>(null)
 
 	const handleMount = useCallback((a: TldrawAgentApp) => {
 		setApp(a)
@@ -69,6 +72,90 @@ function App() {
 		setApp(null)
 		setEditor(null)
 	}, [])
+
+	const handleMicToggle = useCallback(() => {
+		console.log('[Voice] Mic toggle clicked. isRecording:', isRecording)
+
+		if (isRecording) {
+			console.log('[Voice] Stopping recording...')
+			recognitionRef.current?.stop()
+			setIsRecording(false)
+			return
+		}
+
+		const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition
+		if (!SpeechRecognition) {
+			console.error('[Voice] SpeechRecognition not supported')
+			alert('Speech recognition not supported in this browser. Use Chrome.')
+			return
+		}
+
+		console.log('[Voice] Starting recognition...')
+		const recognition = new SpeechRecognition()
+		recognition.continuous = true
+		recognition.interimResults = true
+		recognition.lang = speechLang
+
+		let transcript = ''
+
+		recognition.onstart = () => {
+			console.log('[Voice] Recognition started')
+		}
+
+		recognition.onresult = (event: any) => {
+			let interim = ''
+			for (let i = event.resultIndex; i < event.results.length; i++) {
+				const result = event.results[i]
+				if (result.isFinal) {
+					transcript += result[0].transcript + ' '
+					console.log('[Voice] Final result:', result[0].transcript)
+				} else {
+					interim += result[0].transcript
+				}
+			}
+			if (interim) {
+				console.log('[Voice] Interim:', interim)
+			}
+		}
+
+		recognition.onend = () => {
+			console.log('[Voice] Recognition ended. Full transcript:', transcript)
+			setIsRecording(false)
+			const text = transcript.trim()
+			if (!text) {
+				console.warn('[Voice] No text captured')
+				return
+			}
+			if (!app) {
+				console.error('[Voice] No app instance')
+				return
+			}
+			const agent = app.agents.getAgent()
+			if (!agent) {
+				console.error('[Voice] No agent instance')
+				return
+			}
+			console.log('[Voice] Sending to agent:', text)
+			agent.interrupt({
+				input: {
+					agentMessages: [text],
+					bounds: agent.editor.getViewportPageBounds(),
+					source: 'user',
+					contextItems: agent.context.getItems(),
+				},
+			})
+		}
+
+		recognition.onerror = (event: any) => {
+			console.error('[Voice] Recognition error:', event.error, event)
+			setIsRecording(false)
+		}
+
+		recognition.start()
+		recognitionRef.current = recognition
+		setIsRecording(true)
+		console.log('[Voice] Recognition started, listening...')
+	}, [isRecording, app, speechLang])
 
 	// Keyboard shortcut: "/" opens AI chat
 	useEffect(() => {
@@ -128,19 +215,44 @@ function App() {
 				</div>
 			</div>
 
-			{/* Floating AI button */}
-			<button
-				className="ai-fab"
-				onClick={() => setIsChatOpen(true)}
-				title="AI Agent (press /)"
-			>
-				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-					<path d="M12 2a4 4 0 0 1 4 4v2a4 4 0 0 1-8 0V6a4 4 0 0 1 4-4z" />
-					<path d="M18 14a6 6 0 0 1-12 0" />
-					<line x1="12" y1="20" x2="12" y2="22" />
-					<line x1="8" y1="22" x2="16" y2="22" />
-				</svg>
-			</button>
+			{/* AI toolbar buttons */}
+			<div className="ai-toolbar-group">
+				{/* Chat button (Lucide message-square icon) */}
+				<button
+					className="ai-fab"
+					onClick={() => setIsChatOpen(true)}
+					title="AI Chat (press /)"
+				>
+					<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+						<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+					</svg>
+				</button>
+
+				{/* Language selector */}
+				<select
+					className="ai-lang-select"
+					value={speechLang}
+					onChange={(e) => setSpeechLang(e.target.value)}
+					title="Speech language"
+				>
+					<option value="en-US">EN</option>
+					<option value="ru-RU">RU</option>
+					<option value="kk-KZ">KZ</option>
+				</select>
+
+				{/* Mic button (Lucide mic icon) */}
+				<button
+					className={`ai-fab ai-mic ${isRecording ? 'recording' : ''}`}
+					onClick={handleMicToggle}
+					title={isRecording ? 'Stop recording' : 'Voice input'}
+				>
+					<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+						<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
+						<path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+						<line x1="12" y1="19" x2="12" y2="22" />
+					</svg>
+				</button>
+			</div>
 
 			{/* Floating chat input — wrapped in agent context provider */}
 			{isChatOpen && app && (

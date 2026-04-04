@@ -7,15 +7,21 @@ body {
 	overscroll-behavior: none;
 }
 
-/* ========== Floating AI Button ========== */
+/* ========== AI Toolbar Group ========== */
 
-.ai-fab {
+.ai-toolbar-group {
 	position: fixed;
 	bottom: 12px;
 	left: 50%;
 	transform: translateX(220px);
+	display: flex;
+	gap: 6px;
+	z-index: 99997;
+}
+
+.ai-fab {
 	height: 40px;
-	padding: 0 12px;
+	width: 40px;
 	border-radius: 10px;
 	background: linear-gradient(135deg, #6366f1, #8b5cf6);
 	color: white;
@@ -24,18 +30,51 @@ body {
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
-	z-index: 99997;
 	box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
 	transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .ai-fab:hover {
-	transform: translateX(220px) scale(1.05);
+	transform: scale(1.08);
 	box-shadow: 0 4px 16px rgba(99, 102, 241, 0.5);
 }
 
 .ai-fab:active {
-	transform: translateX(220px) scale(0.97);
+	transform: scale(0.95);
+}
+
+/* Language selector */
+.ai-lang-select {
+	height: 40px;
+	padding: 0 4px;
+	border-radius: 10px;
+	background: rgba(99, 102, 241, 0.15);
+	color: #6366f1;
+	border: 1px solid rgba(99, 102, 241, 0.3);
+	font-size: 12px;
+	font-weight: 600;
+	font-family: 'Inter', sans-serif;
+	cursor: pointer;
+	outline: none;
+	-webkit-appearance: none;
+	appearance: none;
+	text-align: center;
+}
+
+.ai-lang-select:hover {
+	background: rgba(99, 102, 241, 0.25);
+}
+
+/* Mic recording state */
+.ai-mic.recording {
+	background: linear-gradient(135deg, #ef4444, #dc2626);
+	box-shadow: 0 2px 12px rgba(239, 68, 68, 0.5);
+	animation: pulse-recording 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-recording {
+	0%, 100% { box-shadow: 0 2px 12px rgba(239, 68, 68, 0.5); }
+	50% { box-shadow: 0 2px 24px rgba(239, 68, 68, 0.8); }
 }
 
 /* ========== Floating Input ========== */
