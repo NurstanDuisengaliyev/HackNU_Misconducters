@@ -372,6 +372,39 @@ export const UpdateAction = z
 	})
 
 export type UpdateAction = z.infer<typeof UpdateAction>
+// Text to Image Action
+export const TextToImageAction = z
+	.object({
+		_type: z.literal('textToImage'),
+		prompt: z.string(),
+		aspectRatio: z.enum(['1:1', '16:9', '9:16', '4:3', '3:4']).optional(),
+		x: z.number(),
+		y: z.number(),
+	})
+	.meta({
+		title: 'Text to Image',
+		description:
+			'The AI generates an image from a text prompt using Higgsfield API and places it on the canvas at the given (x, y) position. Use this when the user asks to generate, create, or draw an image from a description.',
+	})
+
+export type TextToImageAction = z.infer<typeof TextToImageAction>
+
+// Image to Video Action
+export const ImageToVideoAction = z
+	.object({
+		_type: z.literal('imageToVideo'),
+		imageShapeId: z.string(),
+		prompt: z.string().optional(),
+		duration: z.number().optional(),
+	})
+	.meta({
+		title: 'Image to Video',
+		description:
+			'The AI animates an existing image on the canvas into a video using Higgsfield API. Provide the shapeId of an image shape on the canvas. An optional prompt can describe the desired motion/animation.',
+	})
+
+export type ImageToVideoAction = z.infer<typeof ImageToVideoAction>
+
 // Unknown Action (catch-all for unrecognized actions)
 export const UnknownAction = z
 	.object({

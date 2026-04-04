@@ -7,6 +7,7 @@ import { loadAsset, storeAsset } from './assets'
 import { makeOrLoadRoom } from './rooms'
 import { unfurl } from './unfurl'
 import { agentStreamHandler } from './agentStream'
+import { textToImageHandler, imageToVideoHandler } from './higgsfield'
 
 const PORT = 5858
 
@@ -20,6 +21,8 @@ app.register(cors, { origin: '*' })
 // (the multiplayer scope below uses a wildcard content type parser that would break this)
 app.register(async (app) => {
 	app.post('/stream', agentStreamHandler)
+	app.post('/api/higgsfield/text-to-image', textToImageHandler)
+	app.post('/api/higgsfield/image-to-video', imageToVideoHandler)
 })
 
 app.register(async (app) => {

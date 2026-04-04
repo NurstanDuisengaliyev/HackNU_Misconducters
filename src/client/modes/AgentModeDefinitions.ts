@@ -7,6 +7,8 @@ import { BringToFrontActionUtil } from '../actions/BringToFrontActionUtil'
 import { ClearActionUtil } from '../actions/ClearActionUtil'
 import { CountryInfoActionUtil } from '../actions/CountryInfoActionUtil'
 import { CountShapesActionUtil } from '../actions/CountShapesActionUtil'
+import { TextToImageActionUtil } from '../actions/TextToImageActionUtil'
+import { ImageToVideoActionUtil } from '../actions/ImageToVideoActionUtil'
 import { CreateActionUtil } from '../actions/CreateActionUtil'
 import { DeleteActionUtil } from '../actions/DeleteActionUtil'
 import { DistributeActionUtil } from '../actions/DistributeActionUtil'
@@ -165,6 +167,10 @@ export const AGENT_MODE_DEFINITIONS = [
 			// External APIs
 			CountryInfoActionUtil.type,
 			CountShapesActionUtil.type,
+
+			// AI Generation (Higgsfield)
+			TextToImageActionUtil.type as 'textToImage',
+			ImageToVideoActionUtil.type as 'imageToVideo',
 
 			// Internal (required)
 			UnknownActionUtil.type,
