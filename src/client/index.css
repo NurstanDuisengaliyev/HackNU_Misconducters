@@ -1,8 +1,209 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import url('tldraw/tldraw.css');
 @import url('./agent.css');
 
 body {
 	font-family: 'Inter', sans-serif;
 	overscroll-behavior: none;
+}
+
+/* ========== Floating AI Button ========== */
+
+.ai-fab {
+	position: fixed;
+	bottom: 12px;
+	left: 50%;
+	transform: translateX(220px);
+	height: 40px;
+	padding: 0 12px;
+	border-radius: 10px;
+	background: linear-gradient(135deg, #6366f1, #8b5cf6);
+	color: white;
+	border: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	z-index: 99997;
+	box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+	transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ai-fab:hover {
+	transform: translateX(220px) scale(1.05);
+	box-shadow: 0 4px 16px rgba(99, 102, 241, 0.5);
+}
+
+.ai-fab:active {
+	transform: translateX(220px) scale(0.97);
+}
+
+/* ========== Floating Input ========== */
+
+.floating-input-backdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 99999;
+	background: rgba(0, 0, 0, 0.08);
+	display: flex;
+	align-items: flex-end;
+	justify-content: center;
+	padding-bottom: 70px;
+}
+
+.floating-input {
+	width: 100%;
+	max-width: 560px;
+	animation: floatUp 0.2s ease-out;
+}
+
+@keyframes floatUp {
+	from { opacity: 0; transform: translateY(12px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.floating-input-wrapper {
+	display: flex;
+	align-items: flex-end;
+	gap: 8px;
+	padding: 10px 12px;
+	background: white;
+	border: 1px solid #e2e8f0;
+	border-radius: 16px;
+	box-shadow: 0 8px 40px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+.floating-input-textarea {
+	flex: 1;
+	border: none;
+	background: transparent;
+	color: #1a1a2e;
+	font-family: 'Inter', sans-serif;
+	font-size: 14px;
+	line-height: 1.5;
+	resize: none;
+	outline: none;
+	min-height: 24px;
+	max-height: 120px;
+}
+
+.floating-input-textarea::placeholder {
+	color: #94a3b8;
+}
+
+.floating-input-submit {
+	width: 32px;
+	height: 32px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #6366f1;
+	color: white;
+	border: none;
+	border-radius: 10px;
+	cursor: pointer;
+	transition: background 0.15s ease;
+}
+
+.floating-input-submit:hover {
+	background: #4f46e5;
+}
+
+.floating-input-submit:disabled {
+	background: #cbd5e1;
+	cursor: not-allowed;
+}
+
+.floating-input-hint {
+	text-align: center;
+	font-size: 11px;
+	color: #94a3b8;
+	margin-top: 6px;
+	font-family: 'Inter', sans-serif;
+}
+
+.floating-input-hint kbd {
+	padding: 1px 5px;
+	background: rgba(255, 255, 255, 0.8);
+	border: 1px solid #d1d5db;
+	border-radius: 4px;
+	font-size: 10px;
+}
+
+/* ========== Approval Overlay (Ghost Suggestions) ========== */
+
+.approval-buttons {
+	position: fixed;
+	display: flex;
+	gap: 2px;
+	z-index: 99998;
+	animation: approvalIn 0.2s ease-out;
+}
+
+@keyframes approvalIn {
+	from { opacity: 0; transform: translateY(4px); }
+	to { opacity: 1; transform: translateY(0); }
+}
+
+.approval-btn {
+	width: 28px;
+	height: 28px;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: transform 0.1s ease;
+}
+
+.approval-btn:hover {
+	transform: scale(1.15);
+}
+
+.approval-accept {
+	background: #22c55e;
+	color: white;
+}
+
+.approval-accept:hover {
+	background: #16a34a;
+}
+
+.approval-reject {
+	background: #ef4444;
+	color: white;
+}
+
+.approval-reject:hover {
+	background: #dc2626;
+}
+
+.approval-all-bar {
+	position: fixed;
+	bottom: 70px;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 16px;
+	background: white;
+	border-radius: 12px;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.06);
+	z-index: 99998;
+	font-family: 'Inter', sans-serif;
+	font-size: 13px;
+	font-weight: 500;
+	color: #334155;
+	animation: approvalIn 0.3s ease-out;
+}
+
+.approval-all-bar .approval-btn {
+	width: auto;
+	padding: 6px 12px;
+	font-size: 12px;
 }

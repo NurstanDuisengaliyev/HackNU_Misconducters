@@ -76,6 +76,10 @@ export const CreateActionUtil = registerActionUtil(
 
 			if (!result.shape) return
 
+			// Ghost suggestion: mark as pending so user can accept/reject
+			result.shape.meta = { ...result.shape.meta, isPending: true, suggestedBy: 'AI' }
+			result.shape.opacity = 0.9
+
 			editor.createShape(result.shape)
 
 			// Handle arrow bindings if they exist
