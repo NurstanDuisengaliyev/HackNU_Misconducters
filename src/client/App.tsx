@@ -20,6 +20,7 @@ import { CustomHelperButtons } from './components/CustomHelperButtons'
 import { AgentViewportBoundsHighlights } from './components/highlights/AgentViewportBoundsHighlights'
 import { AllContextHighlights } from './components/highlights/ContextHighlights'
 import { FloatingAgentInput } from './components/FloatingAgentInput'
+import { ProactiveWatcher } from './components/ProactiveWatcher'
 import { TargetAreaTool } from './tools/TargetAreaTool'
 import { TargetShapeTool } from './tools/TargetShapeTool'
 
@@ -82,6 +83,7 @@ function App() {
 	const [editor, setEditor] = useState<Editor | null>(null)
 	const [isChatOpen, setIsChatOpen] = useState(false)
 	const [isRecording, setIsRecording] = useState(false)
+	const [isProactive, setIsProactive] = useState(() => localStorage.getItem('proactive-mode') === 'true')
 	const [speechLang, setSpeechLang] = useState('en-US')
 	const recognitionRef = useRef<any>(null)
 
@@ -239,6 +241,22 @@ function App() {
 				</div>
 			</div>
 
+			{/* Proactive mode toggle */}
+			<button
+				className={`ai-fab ai-proactive ${isProactive ? 'active' : ''}`}
+				onClick={() => {
+					const next = !isProactive
+					setIsProactive(next)
+					localStorage.setItem('proactive-mode', String(next))
+				}}
+				title={isProactive ? 'Proactive mode ON' : 'Proactive mode OFF'}
+			>
+				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+					<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
+					<circle cx="12" cy="12" r="3" />
+				</svg>
+			</button>
+
 			{/* New room button — top left */}
 			<button
 				className="ai-fab ai-new-room"
@@ -292,6 +310,13 @@ function App() {
 					</svg>
 				</button>
 			</div>
+
+			{/* Proactive watcher — only when enabled */}
+			{isProactive && app && (
+				<TldrawAgentAppContextProvider app={app}>
+					<ProactiveWatcher />
+				</TldrawAgentAppContextProvider>
+			)}
 
 			{/* Floating chat input — wrapped in agent context provider */}
 			{isChatOpen && app && (
