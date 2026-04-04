@@ -11,10 +11,10 @@ import {
 import type { AgentAction } from '../shared/types/AgentAction'
 import type { AgentPrompt } from '../shared/types/AgentPrompt'
 import type { Streaming } from '../shared/types/Streaming'
-import { buildMessages } from '../worker/prompt/buildMessages'
-import { buildSystemPrompt } from '../worker/prompt/buildSystemPrompt'
-import { getModelName } from '../worker/prompt/getModelName'
-import { closeAndParseJson } from '../worker/do/closeAndParseJson'
+import { buildMessages } from './prompt/buildMessages'
+import { buildSystemPrompt } from './prompt/buildSystemPrompt'
+import { getModelName } from './prompt/getModelName'
+import { closeAndParseJson } from './closeAndParseJson'
 
 // Initialize AI providers from environment variables
 const providers = {
