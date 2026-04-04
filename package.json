@@ -3,6 +3,9 @@
 	"description": "tldraw infinite canvas SDK (example node server).",
 	"version": "0.0.0",
 	"private": true,
+	"engines": {
+		"node": ">=20"
+	},
 	"author": {
 		"name": "tldraw GB Ltd.",
 		"email": "hello@tldraw.com"
