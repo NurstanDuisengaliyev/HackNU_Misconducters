@@ -13,6 +13,8 @@
 		"dev": "concurrently -n server,client -c red,blue \"npm run dev-server\" \"npm run dev-client\"",
 		"dev-server": "tsx watch ./src/server/server.ts",
 		"dev-client": "vite dev",
+		"build": "vite build",
+		"start": "NODE_ENV=production tsx ./src/server/server.ts",
 		"test": "echo 'No tests yet'"
 	},
 	"devDependencies": {
@@ -31,6 +33,7 @@
 		"@ai-sdk/google": "^3.0.58",
 		"@ai-sdk/openai": "^3.0.50",
 		"@fastify/cors": "^10.0.0",
+		"@fastify/static": "^9.0.0",
 		"@fastify/websocket": "^11.0.0",
 		"@tldraw/sync": "^4.5.7",
 		"@tldraw/sync-core": "^4.5.7",

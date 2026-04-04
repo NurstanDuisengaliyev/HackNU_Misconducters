@@ -3,7 +3,8 @@ import { TextToImageAction } from '../../shared/schema/AgentActionSchemas'
 import { Streaming } from '../../shared/types/Streaming'
 import { AgentActionUtil, registerActionUtil } from './AgentActionUtil'
 
-const WORKER_URL = `${window.location.protocol}//${window.location.hostname}:5858`
+const IS_DEV = window.location.port === '5757'
+const WORKER_URL = IS_DEV ? `${window.location.protocol}//${window.location.hostname}:5858` : ''
 
 export const TextToImageActionUtil = registerActionUtil(
 	class TextToImageActionUtil extends AgentActionUtil<TextToImageAction> {

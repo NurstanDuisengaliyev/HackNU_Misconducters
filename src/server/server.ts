@@ -1,7 +1,10 @@
 import 'dotenv/config'
 import cors from '@fastify/cors'
 import websocketPlugin from '@fastify/websocket'
+import fastifyStatic from '@fastify/static' // @ts-ignore
 import fastify from 'fastify'
+import { resolve } from 'path'
+import { existsSync } from 'fs'
 import type { RawData } from 'ws'
 import { loadAsset, storeAsset } from './assets'
 import { makeOrLoadRoom } from './rooms'
@@ -9,7 +12,8 @@ import { unfurl } from './unfurl'
 import { agentStreamHandler } from './agentStream'
 import { textToImageHandler, imageToVideoHandler } from './higgsfield'
 
-const PORT = 5858
+const PORT = parseInt(process.env.PORT || '5858', 10)
+const IS_PROD = process.env.NODE_ENV === 'production'
 
 // For this example we use a simple fastify server with the official websocket plugin
 // To keep things simple we're skipping normal production concerns like rate limiting and input validation.
@@ -83,6 +87,26 @@ app.register(async (app) => {
 		res.send(await unfurl(url))
 	})
 })
+
+// In production, serve the built React app
+if (IS_PROD) {
+	const distPath = resolve(__dirname, '../../dist')
+	if (existsSync(distPath)) {
+		app.register(fastifyStatic, {
+			root: distPath,
+			prefix: '/',
+			wildcard: false,
+		})
+		// SPA fallback — serve index.html for all non-API routes
+		app.setNotFoundHandler((req, reply) => {
+			if (req.url.startsWith('/connect/') || req.url.startsWith('/stream') || req.url.startsWith('/api/') || req.url.startsWith('/uploads/') || req.url.startsWith('/unfurl')) {
+				reply.status(404).send({ error: 'Not found' })
+			} else {
+				(reply as any).sendFile('index.html')
+			}
+		})
+	}
+}
 
 app.listen({ port: PORT, host: '0.0.0.0' }, (err) => {
 	if (err) {

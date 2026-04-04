@@ -24,7 +24,9 @@ import { ProactiveWatcher } from './components/ProactiveWatcher'
 import { TargetAreaTool } from './tools/TargetAreaTool'
 import { TargetShapeTool } from './tools/TargetShapeTool'
 
-const WORKER_URL = `${window.location.protocol}//${window.location.hostname}:5858`
+// In dev: separate ports (5757 client, 5858 server). In prod: same origin.
+const IS_DEV = window.location.port === '5757'
+const WORKER_URL = IS_DEV ? `${window.location.protocol}//${window.location.hostname}:5858` : ''
 
 // Dynamic room from URL: /room/my-team → "my-team", / → generate random room
 function getRoomId(): string {

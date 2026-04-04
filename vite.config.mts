@@ -20,6 +20,10 @@ export default defineConfig(() => ({
 	],
 	root: path.join(__dirname, 'src/client'),
 	publicDir: path.join(__dirname, 'public'),
+	build: {
+		outDir: path.join(__dirname, 'dist'),
+		emptyOutDir: true,
+	},
 	server: {
 		port: 5757,
 		host: true,
