@@ -135,6 +135,7 @@ export const ImageToVideoActionUtil = registerActionUtil(
 						w: origW,
 						h: origH,
 					},
+					opacity: 1,
 					meta: { suggestedBy: 'AI' },
 				})
 				console.log('[imageToVideo] Video shape created:', videoShapeId)

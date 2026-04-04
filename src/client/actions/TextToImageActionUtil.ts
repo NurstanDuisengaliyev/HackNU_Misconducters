@@ -122,6 +122,7 @@ export const TextToImageActionUtil = registerActionUtil(
 						w: placeholderW,
 						h: placeholderH,
 					},
+					opacity: 1,
 					meta: { isPending: true, suggestedBy: 'AI', originalImageUrl: imageUrl },
 				})
 			} catch (err: any) {

@@ -24,7 +24,29 @@ import { TargetAreaTool } from './tools/TargetAreaTool'
 import { TargetShapeTool } from './tools/TargetShapeTool'
 
 const WORKER_URL = `${window.location.protocol}//${window.location.hostname}:5858`
-const roomId = 'test-room'
+
+// Dynamic room from URL: /room/my-team → "my-team", / → generate random room
+function getRoomId(): string {
+	const match = window.location.pathname.match(/^\/room\/(.+)/)
+	if (match) return match[1]
+	// No room in URL → generate one and redirect
+	const id = Math.random().toString(36).slice(2, 8)
+	window.history.replaceState(null, '', `/room/${id}`)
+	return id
+}
+
+// Prompt for user name (cached in localStorage)
+function getUserName(): string {
+	let name = localStorage.getItem('tldraw-user-name')
+	if (!name) {
+		name = prompt('Enter your name:') || 'Anonymous'
+		localStorage.setItem('tldraw-user-name', name)
+	}
+	return name
+}
+
+const roomId = getRoomId()
+const userName = getUserName()
 
 DefaultSizeStyle.setDefaultValue('s')
 
@@ -66,6 +88,8 @@ function App() {
 	const handleMount = useCallback((a: TldrawAgentApp) => {
 		setApp(a)
 		setEditor(a.editor)
+		// Set user name — shows on cursor for all multiplayer users
+		a.editor.user.updateUserPreferences({ name: userName })
 	}, [])
 
 	const handleUnmount = useCallback(() => {
@@ -214,6 +238,21 @@ function App() {
 					</Tldraw>
 				</div>
 			</div>
+
+			{/* New room button — top left */}
+			<button
+				className="ai-fab ai-new-room"
+				onClick={() => {
+					const id = Math.random().toString(36).slice(2, 8)
+					window.location.href = `/room/${id}`
+				}}
+				title="New room"
+			>
+				<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+					<line x1="12" y1="5" x2="12" y2="19" />
+					<line x1="5" y1="12" x2="19" y2="12" />
+				</svg>
+			</button>
 
 			{/* AI toolbar buttons */}
 			<div className="ai-toolbar-group">
