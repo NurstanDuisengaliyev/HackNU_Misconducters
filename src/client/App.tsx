@@ -230,6 +230,7 @@ function App() {
 			<div className="tldraw-agent-container">
 				<div className="tldraw-canvas">
 					<Tldraw
+						licenseKey={import.meta.env.VITE_TLDRAW_LICENSE_KEY}
 						store={store}
 						tools={tools}
 						overrides={overrides}
