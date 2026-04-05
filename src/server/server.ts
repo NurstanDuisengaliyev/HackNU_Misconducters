@@ -91,6 +91,7 @@ app.register(async (app) => {
 // In production, serve the built React app
 if (IS_PROD) {
 	const distPath = resolve(__dirname, '../../dist')
+	console.log(`[PROD] distPath = ${distPath}, exists = ${existsSync(distPath)}`)
 	if (existsSync(distPath)) {
 		app.register(fastifyStatic, {
 			root: distPath,
